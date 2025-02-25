@@ -1,0 +1,37 @@
+## Deployment configuration
+deployment:
+  # Number of replicas to be deployed.
+  replicas: 2
+
+## If you would like to create an ingress for Reposilite's frontend, you can enable it here.
+## Please refer to your ingress provider's documentation for configuration that may be specific
+## to their ingress implementation.
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-redirect-https@kubernetescrd
+  hosts:
+    - host: maven.cloud.equino.ovh
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+  - secretName: reposilite-tls
+    hosts:
+      - maven.cloud.equino.ovh
+
+## Resources
+resources:
+  requests:
+    cpu: 0.1
+    memory: 128Mi
+  limits:
+    cpu: 0.5
+    memory: 256Mi
+
+## Rolling update
+rollingUpdate:
+  maxUnavailable: 1
+  maxSurge: 1
